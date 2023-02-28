@@ -4,10 +4,11 @@
  *
  * Synopsis:
  *
- *      struct my_struct **array;
+ *      struct my_struct **array = NULL;
  *      malloc_array_of_struct(&array,...);
+ *      if (NULL == array) { ... } // or test the returned value
  *      // ...
- *      free_array_of_struct(&array,...=);
+ *      free_array_of_struct(&array,...);
  */
 
 #include <stdio.h>
@@ -35,6 +36,7 @@ void
 free_array_of_struct(
         struct my_struct ***in_out_prt,
         const size_t in_capacity) {
+    // Always test for NULL.
     if (NULL == *in_out_prt) return;
 
     for (int i=0; i<in_capacity; i++) {
@@ -77,7 +79,13 @@ malloc_array_of_struct(
 }
 
 enum Status test() {
-    struct my_struct **array_of_struct; // pointer to an array of `struct my_struct*`.
+    // Always initialize the value of a pointer to NULL.
+    // Note that you can call `free_array_of_struct` on this pointer.
+    struct my_struct **array_of_struct = NULL; // pointer to an array of `struct my_struct*`.
+
+    // Just to prove the point: call `free_array_of_struct` now. There is nothing to free, but it does not hurt.
+    free_array_of_struct(&array_of_struct,
+                         CAPACITY);
 
     // Allocate the array.
     if (failure == malloc_array_of_struct(&array_of_struct,
@@ -99,12 +107,17 @@ enum Status test() {
     // Free all allocated resources.
     free_array_of_struct(&array_of_struct,
                          CAPACITY);
+
+    // Just to prove the point: call `free_array_of_struct` now. There is nothing to free, but it does not hurt.
+    free_array_of_struct(&array_of_struct,
+                         CAPACITY);
+
     return success;
 }
 
 int main() {
     enum Status status = test();
-    if (success == status) printf("Success\n"); else printf("Failure\n");
+    printf("%s\n", success == status ? "success" : "failure");
     return status;
 }
 

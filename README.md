@@ -5,13 +5,26 @@
   allocated memory location.
 * [2](src/pattern2.c) Use a function to allocate an array of structures. The function returns a pointer to the 
   allocated array.
+* [3](src/pattern3.c) Error reporting.
 
-Compile:
+# Compile
 
 ```bash
 cmake . && make clean && make
 ```
 
+# Run tests
 
+First compile the project, and then execute:
 
+```bash
+make test
+```
 
+# Run the executables
+
+```bash
+./bin/pattern1
+./bin/pattern2
+./bin/pattern3
+```
