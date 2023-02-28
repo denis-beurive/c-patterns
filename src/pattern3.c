@@ -1,11 +1,18 @@
+/**
+ * Report an error with all required data for fast identification:
+ *
+ * - the error is identified by an (hopefully unique) integer.
+ * - the error message includes the precise location (in the source code) where the error was thrown.
+ */
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
 
-#define LAST_ERROR_MESSAGE_BUFFER_CAPACITY 128
+#define LAST_ERROR_MESSAGE_BUFFER_CAPACITY 128 // should be bigger in real life
 enum Status { failure = 1, success = 0 };
 
-static int LAST_ERROR_ID = -1;
+static int LAST_ERROR_ID;
 static char LAST_ERROR_MESSAGE[LAST_ERROR_MESSAGE_BUFFER_CAPACITY];
 
 /**
@@ -136,7 +143,7 @@ int function_fail() {
                           __LINE__,
                           __func__,
                           "This is too long #%d in %s (data: %s)",
-                          2,
+                          3,
                           __func__,
                           data);
 }
