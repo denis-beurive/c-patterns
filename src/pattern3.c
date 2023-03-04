@@ -9,10 +9,17 @@
 #include <stdarg.h>
 #include <string.h>
 
+#define EXIT_SUCCESS 0
+#define EXIT_ERROR 1
 #define LAST_ERROR_MESSAGE_BUFFER_CAPACITY 128 // should be bigger in real life
-enum Status { failure = 1, success = 0 };
+#define LAST_ERROR_FILE_BUFFER_CAPACITY 2048
 
-static int LAST_ERROR_ID;
+enum EnumStatus { failure, success };
+typedef enum EnumStatus Status;
+
+static int  LAST_ERROR_ID;
+static char LAST_ERROR_FILE[LAST_ERROR_FILE_BUFFER_CAPACITY];
+static int  LAST_ERROR_LINE;
 static char LAST_ERROR_MESSAGE[LAST_ERROR_MESSAGE_BUFFER_CAPACITY];
 
 /**
@@ -46,6 +53,21 @@ last_error_get_message() {
 }
 
 /**
+ * @brief Return the path to the file where the error occurred.
+ * @return The path to the file where the error occurred.
+ */
+
+char *
+last_error_file() {
+    return LAST_ERROR_FILE;
+}
+
+int
+last_error_line() {
+    return LAST_ERROR_LINE;
+}
+
+/**
  * @brief Set the last error.
  * @param in_error_id An integer that (hopefully) uniquely identifies the error.
  * @param in_file The *ABSOLUTE* path to the (C) file that contains the code that raised the error.
@@ -61,7 +83,7 @@ last_error_get_message() {
  * to be used to store information about an error. We assume that it will do its job just fine.
  */
 
-enum Status
+Status
 last_error_set(
         const int in_error_id,
         const char *in_file,
@@ -72,8 +94,11 @@ last_error_set(
     int    bytes_written      = 0;
     size_t remaining_capacity = LAST_ERROR_MESSAGE_BUFFER_CAPACITY;
 
-    // Copy the error ID.
+    // Copy the error ID, the line number and the name of the source file.
     LAST_ERROR_ID = in_error_id;
+    LAST_ERROR_LINE = in_line;
+    strncpy(LAST_ERROR_FILE, in_file, LAST_ERROR_FILE_BUFFER_CAPACITY);
+    LAST_ERROR_FILE[LAST_ERROR_FILE_BUFFER_CAPACITY-1] = 0;
 
     // See the comment for the function `vsnprintf()`. `snprintf` behaves the same way.
     // If the buffer is big enough, then `bytes_written` is the number of bytes actually written,
@@ -112,7 +137,8 @@ last_error_set(
     return success;
 }
 
-int function1() {
+Status
+function1() {
     return last_error_set(1,
                           __FILE__,
                           __LINE__,
@@ -122,7 +148,8 @@ int function1() {
                           __func__);
 }
 
-int function2() {
+Status
+function2() {
     return last_error_set(2,
                           __FILE__,
                           __LINE__,
@@ -132,11 +159,14 @@ int function2() {
                           __func__);
 }
 
-int function_fail() {
+Status
+function_fail() {
     // Create a string that will be too big...
     char data[LAST_ERROR_MESSAGE_BUFFER_CAPACITY];
-    memset((void*)data, '.', LAST_ERROR_MESSAGE_BUFFER_CAPACITY);
-    data[LAST_ERROR_MESSAGE_BUFFER_CAPACITY-1] = 0;
+    memset((void *) data,
+           '.',
+           LAST_ERROR_MESSAGE_BUFFER_CAPACITY);
+    data[LAST_ERROR_MESSAGE_BUFFER_CAPACITY - 1] = 0;
 
     return last_error_set(3,
                           __FILE__,
@@ -148,20 +178,41 @@ int function_fail() {
                           data);
 }
 
-int main() {
+int
+main() {
     last_error_init();
 
-    if (function1() == failure) { return failure; };
-    printf("message: [%s]\n", last_error_get_message());
-    printf("id:      [%d]\n", last_error_get_id());
+    if (function1() == failure) { return EXIT_ERROR; };
+    printf("message: [%s]\n",
+           last_error_get_message());
+    printf("id:      [%d]\n",
+           last_error_get_id());
+    printf("file:    [%s]\n",
+           last_error_file());
+    printf("line:    [%d]\n",
+           last_error_line());
 
-    if (function2() == failure) { return failure; };
-    printf("message: [%s]\n", last_error_get_message());
-    printf("id:      [%d]\n", last_error_get_id());
 
-    if (function_fail() == success) { return failure; }
-    printf("message: [%s]\n", last_error_get_message());
-    printf("id:      [%d]\n", last_error_get_id());
+    if (function2() == failure) { return EXIT_ERROR; };
+    printf("message: [%s]\n",
+           last_error_get_message());
+    printf("id:      [%d]\n",
+           last_error_get_id());
+    printf("file:    [%s]\n",
+           last_error_file());
+    printf("line:    [%d]\n",
+           last_error_line());
 
-    return success;
+
+    if (function_fail() == success) { return EXIT_ERROR; }
+    printf("message: [%s]\n",
+           last_error_get_message());
+    printf("id:      [%d]\n",
+           last_error_get_id());
+    printf("file:    [%s]\n",
+           last_error_file());
+    printf("line:    [%d]\n",
+           last_error_line());
+
+    return EXIT_SUCCESS;
 }

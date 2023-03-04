@@ -15,7 +15,7 @@ set(BIN_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 add_executable(pattern1 src/pattern1.c)
 add_executable(pattern2 src/pattern2.c)
 add_executable(pattern3 src/pattern3.c)
-add_executable(pattern4 src/pattern4.c)
+add_executable(pattern4 src/pattern4.c src/pattern4/s_malloc.c src/pattern4/s_malloc.h src/pattern4/common.h)
 
 # Set properties for all executables
 

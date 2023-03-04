@@ -13,8 +13,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define EXIT_SUCCESS 0
+#define EXIT_ERROR 1
 #define CAPACITY 10
-enum Status { failure = 1, success = 0 };
+enum EnumStatus { failure, success };
+typedef enum EnumStatus Status;
 
 struct my_struct {
     int a;
@@ -75,7 +78,8 @@ malloc_array_of_struct(
     return new_array;
 }
 
-enum Status test() {
+Status
+test() {
     // Always initialize the value of a pointer to NULL.
     // Note that you can call `free_array_of_struct` on this pointer.
     struct my_struct **array_of_struct = NULL; // pointer to an array of `struct my_struct*`.
@@ -91,14 +95,16 @@ enum Status test() {
     }
 
     // Initialize each element.
-    for (int i=0; i<CAPACITY; i++) {
+    for (int i = 0; i < CAPACITY; i++) {
         array_of_struct[i]->a = i;
-        array_of_struct[i]->b = i*10;
+        array_of_struct[i]->b = i * 10;
     }
 
     // Print the array.
-    for (int i=0; i<CAPACITY; i++) {
-        printf("(%d, %d)\n", array_of_struct[i]->a, array_of_struct[i]->b);
+    for (int i = 0; i < CAPACITY; i++) {
+        printf("(%d, %d)\n",
+               array_of_struct[i]->a,
+               array_of_struct[i]->b);
     }
 
     // Free all allocated resources.
@@ -112,10 +118,10 @@ enum Status test() {
     return success;
 }
 
-int main() {
-    enum Status status = test();
-    printf("%s\n", success == status ? "success" : "failure");
-    return status;
+int
+main() {
+    Status status = test();
+    printf("%s\n",
+           success == status ? "success" : "failure");
+    return status == success ? EXIT_SUCCESS : EXIT_ERROR;
 }
-
-
