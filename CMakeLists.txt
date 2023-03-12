@@ -15,12 +15,13 @@ set(BIN_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 add_executable(pattern1 src/pattern1.c)
 add_executable(pattern2 src/pattern2.c)
 add_executable(pattern3 src/pattern3.c)
-add_executable(pattern4 src/pattern4.c src/pattern4/s_alloc.c src/pattern4/s_alloc.h src/pattern4/common.h)
+add_executable(pattern4 src/pattern4.c src/pattern4.h)
+add_executable(pattern5 src/pattern5.c src/pattern5/s_alloc.c src/pattern5/s_alloc.h src/pattern5/common.h)
 
 # Set properties for all executables
 
 set_target_properties(
-        pattern1 pattern2 pattern3 pattern4
+        pattern1 pattern2 pattern3 pattern4 pattern5
         PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BIN_DIRECTORY}
                    EXCLUDE_FROM_ALL off)
 
@@ -30,4 +31,5 @@ add_test(test_program1  ${BIN_DIRECTORY}/pattern1)
 add_test(test_program2  ${BIN_DIRECTORY}/pattern2)
 add_test(test_program3  ${BIN_DIRECTORY}/pattern3)
 add_test(test_program4  ${BIN_DIRECTORY}/pattern4)
+add_test(test_program5  ${BIN_DIRECTORY}/pattern5)
 
