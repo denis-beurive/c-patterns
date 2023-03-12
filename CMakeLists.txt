@@ -10,6 +10,14 @@ set(C_FLAGS "-Wall -Wuninitialized -Wmissing-include-dirs -Wextra -Wconversion -
 
 set(BIN_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
+# Add library to the project
+
+add_library(resource_manager STATIC
+        src/resource_manager/resource_manager.c
+        src/resource_manager/resource_manager.h
+        src/resource_manager/rm_mem.c
+        src/resource_manager/rm_mem.h)
+
 # Add executable to the project
 
 add_executable(pattern1 src/pattern1.c)
