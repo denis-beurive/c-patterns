@@ -6,7 +6,7 @@
 * [2](src/pattern2.c) Use a function to allocate an array of structures. The function returns a pointer to the 
   allocated array.
 * [3](src/pattern3.c) Error reporting.
-* [4](src/pattern4.h) How to extend a list of enums.
+* [4](src/pattern4.c) How to extend a list of enums.
 
 # Compile
 
@@ -28,4 +28,5 @@ make test
 ./bin/pattern1
 ./bin/pattern2
 ./bin/pattern3
+./bin/pattern4
 ```
